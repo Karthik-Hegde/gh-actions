@@ -24,7 +24,14 @@ jobs:
       - name: run lint
         run: npm run lint
       - name: run test
+        id: run-tests
         run: npm run test
+      - name: Upload test report
+        if: failure() && steps.run-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test.json
       - name: Env variable
         run: echo "${{ env.MY_SECRET }}"
   # Job Artifacts
