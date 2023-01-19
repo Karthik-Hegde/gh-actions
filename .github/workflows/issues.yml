@@ -1,0 +1,19 @@
+name: Isuues
+on:
+  issues:
+    types: opened
+
+jobs:
+  add-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add 'Triage' label
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: contect.repo.repo,
+              labels: ['Triage']
+            })
