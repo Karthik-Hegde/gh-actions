@@ -8,6 +8,11 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
+      - name: Cache Deps
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install deps
         run: npm ci
       - name: run lint
@@ -26,6 +31,11 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
+      - name: Cache Deps
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install deps
         run: npm ci
       - name: build
