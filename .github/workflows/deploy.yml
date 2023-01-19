@@ -2,8 +2,14 @@ name: Test and Deploy
 
 on: push
 
+env:
+  MY_SECRET: ${{ secrets.MY_SECRET }}
+
 jobs:
   lint-test:
+    environment: test
+    env:
+      MY_SECRET: ${{ secrets.MY_SECRET }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
@@ -19,6 +25,8 @@ jobs:
         run: npm run lint
       - name: run test
         run: npm run test
+      - name: Env variable
+        run: echo "${{ env.MY_SECRET }}"
   # Job Artifacts
   # using upload action to upload the generated build files to dist-files
   # then using the download-artifact to download and use the artifacts
@@ -48,6 +56,8 @@ jobs:
         with:
           name: dist-files
           path: dist
+      - name: Env variable
+        run: echo "${{ env.MY_SECRET }}"
 
   deploy:
     needs: build
