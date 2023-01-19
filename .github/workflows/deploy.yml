@@ -14,9 +14,15 @@ jobs:
         run: npm run lint
       - name: run test
         run: npm run test
+  # Job Artifacts
+  # using upload action to upload the generated build files to dist-files
+  # then using the download-artifact to download and use the artifacts
   build:
     needs: lint-test
     runs-on: ubuntu-latest
+    # outputs is used to share some values with other job runners
+    outputs:
+      script-file: ${{ steps.publish.outputs.script-file }}
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
@@ -24,6 +30,9 @@ jobs:
         run: npm ci
       - name: build
         run: npm run build
+      - name: Publish JS filename
+        id: publish
+        run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';'
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -34,6 +43,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Get build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+      - name: Output contents
+        run: ls
+      - name: Output build job filename
+        run: echo "${{ needs.build.outputs.script-file }}"
       - name: Deploy
         run: |
           echo "Deploying..."
